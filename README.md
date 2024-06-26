@@ -33,7 +33,8 @@ mv target/release/depot /usr/local/bin
 Please note that you need to have [Rust](https://www.rust-lang.org/tools/install) installed to build the project.
 
 ## Configuration
-Depot will try to guess your package manager based on your operating system. However, sometimes you may want to specify it yourself. For example on Arch (btw) you may want to use `yay` instead of `pacman`.\
+Depot will try to guess your package manager based on your operating system. However, sometimes you may want to specify it yourself.
+For example, as I use Arch (btw), I may want to use `yay` instead of `pacman`.\
 To do so you have 2 options:
 1. Set the environment variable `DEPOT_PM` to the name of your package manager
 2. Add the flag `--pm <package_manager>` when running a command
@@ -48,7 +49,7 @@ Depot has 5 commands:
 
 
 ## Example
-In this example I will install `vim` (btw) and `zsh` on both of my computers.\
+In this example I will install `vim` and `zsh` on both of my computers.\
 I use `scp` to copy the package list file from one computer to the other.\
 Then I use `ssh` to connect to the other computer and run `depot sync` to install the missing packages on the other computer.
 ```bash
@@ -59,10 +60,11 @@ $ depot install zsh
 zsh is now installed.
 
 $ scp ~/.depot/packages user@computer:~/.depot/packages
-package list file copied to computer
+README.md                                     100% 2287     2.2MB/s   00:00    
 
 $ ssh user@computer 
-Welcome to computer.
+$ whoami
+user
 
 $ depot sync
 Packages synced with config.
