@@ -60,7 +60,7 @@ $ depot install zsh
 zsh is now installed.
 
 $ scp ~/.depot/packages user@computer:~/.depot/packages
-README.md                                     100% 2287     2.2MB/s   00:00    
+wanted.json                                     100% 123     2.2MB/s   00:00
 
 $ ssh user@computer 
 $ whoami
