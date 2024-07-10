@@ -80,8 +80,9 @@ Package managers listed below are supported by Depot:
 | OS/Linux Distribution | `pacman` | `yay` | `apt` | `apt-get` | `pkg` | `dnf` | `apk` |
 |-----------------------|----------|-------|-------|-----------|-------|-------|-------|
 | Arch (btw)            | ✔        | ✔     | X     | X         | X     | X     | X     |
-| Debian/Ubuntu         | X        | X     | ✔     | ✔         | X     | X     | X     |
-| Android (Termux)      | X        | X     | X     | X         | ✔     | X     | X     |
+| Debian                | X        | X     | ✔     | ✔         | X     | X     | X     |
+| Ubuntu                | X        | X     | ✔     | ✔         | X     | X     | X     |
+| Android (Termux)      | X        | X     | ✔     | ✔         | ✔     | X     | X     |
 | Fedora                | X        | X     | X     | X         | X     | ✔     | X     |
 | Alpine                | X        | X     | X     | X         | X     | X     | ✔     |
 
