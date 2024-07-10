@@ -36,3 +36,11 @@ jobs:
       - run: rustup update stable && rustup default stable
       - run: cargo fmt --all -- --check --verbose
 
+  rust_code_tests:
+    name: Rust build and test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: rustup update stable && rustup default stable
+      - run: cargo test --verbose
+
