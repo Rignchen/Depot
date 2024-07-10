@@ -1,4 +1,4 @@
-use depot::OperatingSystem;
+use depot::{unwrap_depot_error, OperatingSystem};
 
 /// Main function of the program
 /// Parse the command line arguments
@@ -7,6 +7,6 @@ use depot::OperatingSystem;
 ///  - the environment variables
 ///  - get the os name and deduce it from there
 fn main() {
-    let os = OperatingSystem::current().unwrap();
+    let os = unwrap_depot_error(OperatingSystem::current());
     println!("OS: {:?}", os);
 }
