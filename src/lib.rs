@@ -5,6 +5,9 @@ pub enum DepotError {
     UnknownOperatingSystem,
 }
 
+/// Result type wich wither take a type T or a DepotError.
+pub type DepotResult<T> = std::result::Result<T, DepotError>;
+
 /// List of all supported operating systems.
 pub enum OperatingSystem {
     Arch,
@@ -15,7 +18,7 @@ pub enum OperatingSystem {
 }
 impl OperatingSystem {
     /// Get the currently running operating system.
-    pub fn current() -> Result<OperatingSystem, DepotError> {
+    pub fn current() -> DepotResult<OperatingSystem> {
         match std::env::consts::OS {
             "linux" => {
                 let mut file = std::fs::File::open("/etc/os-release").unwrap();
