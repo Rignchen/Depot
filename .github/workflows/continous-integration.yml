@@ -20,3 +20,11 @@ jobs:
       - run: rustup update stable && rustup default stable
       - run: cargo build --verbose
 
+  rust_code_linter:
+    name: Code linting with clippy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: rustup update stable && rustup default stable
+      - run: cargo clippy --all-targets --all-features
+
