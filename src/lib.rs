@@ -1,6 +1,7 @@
 use std::io::Read;
 
 /// List of errors that the program can return.
+#[derive(Debug)]
 pub enum DepotError {
     UnknownOperatingSystem,
 }
@@ -9,6 +10,7 @@ pub enum DepotError {
 pub type DepotResult<T> = std::result::Result<T, DepotError>;
 
 /// List of all supported operating systems.
+#[derive(Debug)]
 pub enum OperatingSystem {
     Arch,
     Alpine,
