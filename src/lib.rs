@@ -38,15 +38,16 @@ impl OperatingSystem {
     pub fn current() -> DepotResult<OperatingSystem> {
         match std::env::consts::OS {
             "linux" => {
-                let mut file = std::fs::File::open("/etc/os-release").unwrap();
                 let mut contents = String::new();
-                // Read the file and look for the NAME field.
-                file.read_to_string(&mut contents).unwrap();
-                let os = contents
+                std::fs::File::open("/etc/os-release")
+                    .unwrap()
+                    .read_to_string(&mut contents)
+                    .unwrap();
+                match contents
                     .split('\n')
                     .find(|line| line.starts_with("NAME="))
-                    .unwrap();
-                match os {
+                    .unwrap()
+                {
                     "NAME=\"Arch Linux\"" => Ok(OperatingSystem::Arch),
                     "NAME=\"Alpine Linux\"" => Ok(OperatingSystem::Alpine),
                     "NAME=\"Debian GNU/Linux\"" => Ok(OperatingSystem::Debian),
