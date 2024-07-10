@@ -10,6 +10,9 @@
   "bump-minor-pre-major": true,
   "bump-patch-for-minor-pre-major": true,
   "pull-request-header": "Auto generated release",
+  "extra-files": [
+    "README.md"
+  ],
   "changelog-sections": [
     {
       "type": "feat",

@@ -10,6 +10,9 @@ Depot solves this problem by guessing your project manager depending on your ope
 When you ask Depot to install a package, Depot will start by guessing your project manager and then ask the project manager to install the package.\
 In top of that, Depot will also store the package name you asked inside a file, you can then bring this file to another computer and ask Depot to install all the packages you need.
 
+## Changelog
+**v0.0.1 :** [Read changelog](./CHANGELOG.md) <!-- x-release-please-version -->
+
 ## Installation
 ```bash
 git clone git@github.com:Rignchen/Depot.git
