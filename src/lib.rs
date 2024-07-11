@@ -45,14 +45,14 @@ impl OperatingSystem {
                     .unwrap();
                 match contents
                     .split('\n')
-                    .find(|line| line.starts_with("NAME="))
+                    .find(|line| line.starts_with("ID="))
                     .unwrap()
                 {
-                    "NAME=\"Arch Linux\"" => Ok(OperatingSystem::Arch),
-                    "NAME=\"Alpine Linux\"" => Ok(OperatingSystem::Alpine),
-                    "NAME=\"Debian GNU/Linux\"" => Ok(OperatingSystem::Debian),
-                    "NAME=\"Ubuntu\"" => Ok(OperatingSystem::Ubuntu),
-                    "NAME=\"Fedora Linux\"" => Ok(OperatingSystem::Fedora),
+                    "ID=arch" => Ok(OperatingSystem::Arch),
+                    "ID=alpine" => Ok(OperatingSystem::Alpine),
+                    "ID=debian" => Ok(OperatingSystem::Debian),
+                    "ID=ubuntu" => Ok(OperatingSystem::Ubuntu),
+                    "ID=fedora" => Ok(OperatingSystem::Fedora),
                     _ => Err(DepotError::UnknownOperatingSystem),
                 }
             }
