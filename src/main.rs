@@ -3,15 +3,20 @@ use clap::Parser;
 structstruck::strike! {
     /// Structure of the command line arguments
     ///
-    /// Usage: depot [COMMAND]
+    /// Usage: depot [OPTION] <COMMAND>
+    ///
+    /// Options:
+    ///  -p, --pm, --package-manager <package-manager>   Manually select the package manager
     ///
     /// Commands:
     ///  install    Install a package
     ///  remove     Remove a package
     ///  search     Search for a package
     ///  update     Update the package list
-    #[strikethrough[derive(Parser)]]
+    #[strikethrough[derive(Parser, Debug)]]
     struct Args {
+        #[clap(short, long, alias = "pm")]
+        package_manager: Option<String>,
         #[clap(subcommand)]
         cmd: enum Command {
             Install(
@@ -44,6 +49,7 @@ structstruck::strike! {
 ///  - get the os name and deduce it from there
 fn main() {
     let args = Args::parse();
+    println!("Args: {:?}", args);
     println!(
         "{}",
         match args.cmd {
