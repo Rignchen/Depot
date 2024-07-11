@@ -26,7 +26,7 @@ echo ""
 # run all docker containers and say the OS name
 for os_name in $os_names; do
     echo "test from: $os_name"
-    docker run --rm "test_on_all_os:$os_name"
+    docker run --rm "test_on_all_os:$os_name" $@
 done
 
 echo ""
