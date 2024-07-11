@@ -73,7 +73,6 @@ pub enum PackageManager {
     Apk,
     AptGet,
     Apt,
-    Api,
     Pkg,
     Dnf,
 }
@@ -116,7 +115,6 @@ pub fn get_package_manager(expected: Option<PackageManager>) -> DepotResult<Pack
                 "apk" => Ok(PackageManager::Apk),
                 "apt-get" => Ok(PackageManager::AptGet),
                 "apt" => Ok(PackageManager::Apt),
-                "api" => Ok(PackageManager::Api),
                 "pkg" => Ok(PackageManager::Pkg),
                 "dnf" => Ok(PackageManager::Dnf),
                 _ => Err(DepotError::UnknownPackageManager),
