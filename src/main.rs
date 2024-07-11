@@ -12,7 +12,7 @@ structstruck::strike! {
     ///  install    Install a package
     ///  remove     Remove a package
     ///  search     Search for a package
-    ///  update     Update the package list
+    ///  update     Update the package
     #[strikethrough[derive(Parser, Debug)]]
     struct Args {
         #[clap(short, long, alias = "pm")]
@@ -35,7 +35,9 @@ structstruck::strike! {
                 }
             ),
             Update(
-                struct Update {}
+                struct Update {
+                    package: Option<String>,
+                }
             ),
         }
     }
@@ -56,7 +58,7 @@ fn main() {
             Command::Install(i) => format!("Install package: {}", i.package),
             Command::Remove(r) => format!("Remove package: {}", r.package),
             Command::Search(s) => format!("Search for package: {}", s.query),
-            Command::Update(_) => "Update the package list".to_string(),
+            Command::Update(u) => format!("Update package list: {}", u.package.unwrap_or("all".to_string())),
         }
     );
 }
