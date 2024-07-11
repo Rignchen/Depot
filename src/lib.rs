@@ -1,9 +1,11 @@
 use std::io::Read;
+use std::env;
 
 /// List of errors that the program can return.
 #[derive(Debug)]
 pub enum DepotError {
     UnknownOperatingSystem,
+    UnknownPackageManager,
 }
 
 /// Result type wich wither take a type T or a DepotError.
@@ -17,6 +19,8 @@ pub fn unwrap_depot_error<T>(result: DepotResult<T>) -> T {
                 match error {
                     DepotError::UnknownOperatingSystem =>
                         "Unable to determine your current operating system.",
+                    DepotError::UnknownPackageManager =>
+                        "The package manager is unknown or not supported.",
                 }
             );
             std::process::exit(1);
@@ -85,25 +89,25 @@ impl From<&OperatingSystem> for PackageManager {
     }
 }
 
-pub fn get_package_manager(expected: Option<PackageManager>) -> PackageManager {
+pub fn get_package_manager(expected: Option<PackageManager>) -> DepotResult<PackageManager> {
     match expected {
-        Some(manager) => manager,
+        Some(manager) => Ok(manager),
         None => {
             match env::var("DEPOT_PACKAGE_MANAGER") {
                 Ok(manager) => match manager.as_str() {
-                    "pacman" => PackageManager::Pacman,
-                    "yay" => PackageManager::Yay,
-                    "apk" => PackageManager::Apk,
-                    "apt-get" => PackageManager::AptGet,
-                    "apt" => PackageManager::AptGet,
-                    "api" => PackageManager::Api,
-                    "pkg" => PackageManager::Pkg,
-                    "dnf" => PackageManager::Dnf,
-                    _ => panic!("Unknown package manager."),
+                    "pacman" => Ok(PackageManager::Pacman),
+                    "yay" => Ok(PackageManager::Yay),
+                    "apk" => Ok(PackageManager::Apk),
+                    "apt-get" => Ok(PackageManager::AptGet),
+                    "apt" => Ok(PackageManager::AptGet),
+                    "api" => Ok(PackageManager::Api),
+                    "pkg" => Ok(PackageManager::Pkg),
+                    "dnf" => Ok(PackageManager::Dnf),
+                    _ => Err(DepotError::UnknownPackageManager),
                 },
                 Err(_) => {
-                    let os = OperatingSystem::current().unwrap();
-                    PackageManager::from(&os)
+                    let os = OperatingSystem::current()?;
+                    Ok(PackageManager::from(&os))
                 }
             }
         }

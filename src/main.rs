@@ -52,7 +52,9 @@ structstruck::strike! {
 ///  - get the os name and deduce it from there
 fn main() {
     let args = Args::parse();
-    let package_manager = get_package_manager(args.package_manager);
+    let package_manager = unwrap_depot_error(
+        get_package_manager(args.package_manager)
+    );
     println!("Package manager: {:?}", package_manager);
     println!(
         "{}",
