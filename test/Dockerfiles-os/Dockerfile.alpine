@@ -1,0 +1,7 @@
+# bash says that the binary is not found on alpine
+FROM alpine
+
+WORKDIR /app
+COPY ./target/release/depot ./
+CMD ["./depot"]
+

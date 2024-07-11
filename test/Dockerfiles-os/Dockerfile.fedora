@@ -1,0 +1,6 @@
+FROM fedora
+
+WORKDIR /app
+COPY ./target/release/depot ./
+CMD ["./depot"]
+

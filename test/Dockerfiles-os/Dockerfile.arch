@@ -1,0 +1,6 @@
+FROM archlinux/archlinux
+
+WORKDIR /app
+COPY ./target/release/depot ./
+CMD ["./depot"]
+
