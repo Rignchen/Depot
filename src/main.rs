@@ -44,10 +44,13 @@ structstruck::strike! {
 ///  - get the os name and deduce it from there
 fn main() {
     let args = Args::parse();
-    println!("{}", match args.cmd {
-        Command::Install(i) => format!("Install package: {}", i.package),
-        Command::Remove(r) => format!("Remove package: {}", r.package),
-        Command::Search(s) => format!("Search for package: {}", s.query),
-        Command::Update(_) => "Update the package list".to_string(),
-    });
+    println!(
+        "{}",
+        match args.cmd {
+            Command::Install(i) => format!("Install package: {}", i.package),
+            Command::Remove(r) => format!("Remove package: {}", r.package),
+            Command::Search(s) => format!("Search for package: {}", s.query),
+            Command::Update(_) => "Update the package list".to_string(),
+        }
+    );
 }
