@@ -102,6 +102,10 @@ impl From<&OperatingSystem> for PackageManager {
 /// std::env::remove_var("DEPOT_PACKAGE_MANAGER");
 /// assert_eq!(get_package_manager(None).unwrap(),PackageManager::from(&OperatingSystem::current().unwrap()));
 /// ```
+/// ```should_panic
+/// std::env::set_var("DEPOT_PACKAGE_MANAGER", "unknown");
+/// depot::get_package_manager(None).unwrap();
+/// ```
 pub fn get_package_manager(expected: Option<PackageManager>) -> DepotResult<PackageManager> {
     match expected {
         Some(manager) => Ok(manager),
