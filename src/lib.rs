@@ -72,3 +72,15 @@ pub enum PackageManager {
     Pkg,
     Dnf,
 }
+impl From<&OperatingSystem> for PackageManager {
+    /// Get the default package manager for the operating system.
+    fn from(os: &OperatingSystem) -> PackageManager {
+        match os {
+            OperatingSystem::Arch => PackageManager::Pacman,
+            OperatingSystem::Alpine => PackageManager::Apk,
+            OperatingSystem::Debian => PackageManager::AptGet,
+            OperatingSystem::Ubuntu => PackageManager::AptGet,
+            OperatingSystem::Fedora => PackageManager::Dnf,
+        }
+    }
+}
