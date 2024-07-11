@@ -66,7 +66,7 @@ impl OperatingSystem {
 }
 
 /// List of all supported operating systems.
-#[derive(clap::ValueEnum, Debug, Clone)]
+#[derive(clap::ValueEnum, Debug, Clone, PartialEq)]
 pub enum PackageManager {
     Pacman,
     Yay,
@@ -90,6 +90,18 @@ impl From<&OperatingSystem> for PackageManager {
     }
 }
 
+/// Get the package manager to use.
+/// If the expected one is None, look for it in the environment variables.
+/// If it is not in the environment variables, guess it from the current operating system.
+///
+/// ```
+/// use depot::{get_package_manager, PackageManager, OperatingSystem};
+/// assert_eq!(get_package_manager(Some(PackageManager::Pacman)).unwrap(), PackageManager::Pacman);
+/// std::env::set_var("DEPOT_PACKAGE_MANAGER", "yay");
+/// assert_eq!(get_package_manager(None).unwrap(), PackageManager::Yay);
+/// std::env::remove_var("DEPOT_PACKAGE_MANAGER");
+/// assert_eq!(get_package_manager(None).unwrap(),PackageManager::from(&OperatingSystem::current().unwrap()));
+/// ```
 pub fn get_package_manager(expected: Option<PackageManager>) -> DepotResult<PackageManager> {
     match expected {
         Some(manager) => Ok(manager),
