@@ -2,5 +2,5 @@ FROM ubuntu
 
 WORKDIR /app
 COPY ./target/release/depot ./
-CMD ["./depot"]
+ENTRYPOINT ["./depot"]
 
