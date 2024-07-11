@@ -1,4 +1,5 @@
 use clap::Parser;
+use depot::{unwrap_depot_error, OperatingSystem};
 
 structstruck::strike! {
     /// Structure of the command line arguments
@@ -61,4 +62,6 @@ fn main() {
             Command::Update(u) => format!("Update package list: {}", u.package.unwrap_or("all".to_string())),
         }
     );
+    let os = unwrap_depot_error(OperatingSystem::current());
+    println!("OS: {:?}", os);
 }
