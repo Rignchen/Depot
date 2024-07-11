@@ -1,5 +1,5 @@
 use clap::Parser;
-use depot::{unwrap_depot_error, OperatingSystem};
+use depot::{unwrap_depot_error, OperatingSystem, PackageManager};
 
 structstruck::strike! {
     /// Structure of the command line arguments
@@ -16,8 +16,8 @@ structstruck::strike! {
     ///  update     Update the package
     #[strikethrough[derive(Parser, Debug)]]
     struct Args {
-        #[clap(short, long, alias = "pm")]
-        package_manager: Option<String>,
+        #[clap(short, long, alias = "pm", value_enum)]
+        package_manager: Option<PackageManager>,
         #[clap(subcommand)]
         cmd: enum Command {
             Install(

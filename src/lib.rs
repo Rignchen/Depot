@@ -60,3 +60,15 @@ impl OperatingSystem {
         }
     }
 }
+
+/// List of all supported operating systems.
+#[derive(clap::ValueEnum, Debug, Clone)]
+pub enum PackageManager {
+    Pacman,
+    Yay,
+    Apk,
+    AptGet,
+    Api,
+    Pkg,
+    Dnf,
+}
