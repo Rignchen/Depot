@@ -84,3 +84,28 @@ impl From<&OperatingSystem> for PackageManager {
         }
     }
 }
+
+pub fn get_package_manager(expected: Option<PackageManager>) -> PackageManager {
+    match expected {
+        Some(manager) => manager,
+        None => {
+            match env::var("DEPOT_PACKAGE_MANAGER") {
+                Ok(manager) => match manager.as_str() {
+                    "pacman" => PackageManager::Pacman,
+                    "yay" => PackageManager::Yay,
+                    "apk" => PackageManager::Apk,
+                    "apt-get" => PackageManager::AptGet,
+                    "apt" => PackageManager::AptGet,
+                    "api" => PackageManager::Api,
+                    "pkg" => PackageManager::Pkg,
+                    "dnf" => PackageManager::Dnf,
+                    _ => panic!("Unknown package manager."),
+                },
+                Err(_) => {
+                    let os = OperatingSystem::current().unwrap();
+                    PackageManager::from(&os)
+                }
+            }
+        }
+    }
+}
