@@ -1,5 +1,5 @@
 use clap::Parser;
-use depot::{unwrap_depot_error, PackageManager, get_package_manager};
+use depot::{get_package_manager, unwrap_depot_error, PackageManager};
 
 structstruck::strike! {
     /// Structure of the command line arguments
@@ -52,9 +52,7 @@ structstruck::strike! {
 ///  - get the os name and deduce it from there
 fn main() {
     let args = Args::parse();
-    let package_manager = unwrap_depot_error(
-        get_package_manager(args.package_manager)
-    );
+    let package_manager = unwrap_depot_error(get_package_manager(args.package_manager));
     println!("Package manager: {:?}", package_manager);
     println!(
         "{}",

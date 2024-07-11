@@ -1,5 +1,5 @@
-use std::io::Read;
 use std::env;
+use std::io::Read;
 
 /// List of errors that the program can return.
 #[derive(Debug)]
@@ -93,24 +93,22 @@ impl From<&OperatingSystem> for PackageManager {
 pub fn get_package_manager(expected: Option<PackageManager>) -> DepotResult<PackageManager> {
     match expected {
         Some(manager) => Ok(manager),
-        None => {
-            match env::var("DEPOT_PACKAGE_MANAGER") {
-                Ok(manager) => match manager.as_str() {
-                    "pacman" => Ok(PackageManager::Pacman),
-                    "yay" => Ok(PackageManager::Yay),
-                    "apk" => Ok(PackageManager::Apk),
-                    "apt-get" => Ok(PackageManager::AptGet),
-                    "apt" => Ok(PackageManager::Apt),
-                    "api" => Ok(PackageManager::Api),
-                    "pkg" => Ok(PackageManager::Pkg),
-                    "dnf" => Ok(PackageManager::Dnf),
-                    _ => Err(DepotError::UnknownPackageManager),
-                },
-                Err(_) => {
-                    let os = OperatingSystem::current()?;
-                    Ok(PackageManager::from(&os))
-                }
+        None => match env::var("DEPOT_PACKAGE_MANAGER") {
+            Ok(manager) => match manager.as_str() {
+                "pacman" => Ok(PackageManager::Pacman),
+                "yay" => Ok(PackageManager::Yay),
+                "apk" => Ok(PackageManager::Apk),
+                "apt-get" => Ok(PackageManager::AptGet),
+                "apt" => Ok(PackageManager::Apt),
+                "api" => Ok(PackageManager::Api),
+                "pkg" => Ok(PackageManager::Pkg),
+                "dnf" => Ok(PackageManager::Dnf),
+                _ => Err(DepotError::UnknownPackageManager),
+            },
+            Err(_) => {
+                let os = OperatingSystem::current()?;
+                Ok(PackageManager::from(&os))
             }
-        }
+        },
     }
 }
