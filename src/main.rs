@@ -59,7 +59,10 @@ fn main() {
             Command::Install(i) => format!("Install package: {}", i.package),
             Command::Remove(r) => format!("Remove package: {}", r.package),
             Command::Search(s) => format!("Search for package: {}", s.query),
-            Command::Update(u) => format!("Update package list: {}", u.package.unwrap_or("all".to_string())),
+            Command::Update(u) => format!(
+                "Update package list: {}",
+                u.package.unwrap_or("all".to_string())
+            ),
         }
     );
     let os = unwrap_depot_error(OperatingSystem::current());
