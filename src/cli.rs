@@ -8,6 +8,7 @@ structstruck::strike! {
     /// That way you keep all advantages of your package manager while using a unified interface.
     #[strikethrough[derive(Parser, Debug)]]
     #[clap(verbatim_doc_comment)]
+    #[command(version)]
     pub struct Args {
         #[clap(short, long, alias = "pm", value_enum)]
         pub package_manager: Option<PackageManager>,
