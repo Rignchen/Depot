@@ -5,7 +5,7 @@ pub enum DepotError {
     UnknownPackageManager,
 }
 
-/// Result type wich wither take a type T or a DepotError.
+/// Result type which wither take a type T or a DepotError.
 pub type DepotResult<T> = std::result::Result<T, DepotError>;
 pub fn unwrap_depot_error<T>(result: DepotResult<T>) -> T {
     match result {
