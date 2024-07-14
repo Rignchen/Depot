@@ -1,5 +1,5 @@
+use crate::package_manager::PackageManager;
 use clap::Parser;
-use depot::package_manager::PackageManager;
 
 structstruck::strike! {
     /// Structure of the command line arguments

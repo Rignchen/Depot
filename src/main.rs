@@ -1,7 +1,9 @@
 use clap::Parser;
-use depot::{error::unwrap_depot_error, package_manager::get_package_manager};
-mod cli;
-use cli::{Args, Command};
+use depot::{
+    cli::{Args, Command},
+    error::unwrap_depot_error,
+    package_manager::get_package_manager,
+};
 
 /// Main function of the program
 /// Parse the command line arguments
