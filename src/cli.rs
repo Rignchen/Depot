@@ -17,7 +17,7 @@ structstruck::strike! {
             #[clap(alias = "i")]
             Install(
                 struct Install {
-                    pub package: String,
+                    pub package: Vec<String>,
                     /// Install the package without asking for confirmation
                     #[clap(short, long)]
                     pub yes: bool,
@@ -27,7 +27,7 @@ structstruck::strike! {
             #[clap(alias = "r")]
             Remove(
                 struct Remove {
-                    pub package: String,
+                    pub package: Vec<String>,
                     /// Install the package without asking for confirmation
                     #[clap(short, long)]
                     pub yes: bool,
@@ -44,7 +44,7 @@ structstruck::strike! {
             #[clap(alias = "u")]
             Update(
                 struct Update {
-                    pub package: Option<String>,
+                    pub package: Option<Vec<String>>,
                     /// Install the package without asking for confirmation
                     #[clap(short, long)]
                     pub yes: bool,
@@ -52,4 +52,25 @@ structstruck::strike! {
             ),
         }
     }
+}
+
+pub fn parse_args() -> Args {
+    let mut args = Args::parse();
+    // due to a bug in clap, we need to ensure that at lesat one argument package is provided
+    match &mut args.cmd {
+        Command::Install(install) => {
+            if install.package.is_empty() {
+                eprintln!("Error: No package provided");
+                std::process::exit(1);
+            }
+        }
+        Command::Remove(remove) => {
+            if remove.package.is_empty() {
+                eprintln!("Error: No package provided");
+                std::process::exit(1);
+            }
+        }
+        _ => {}
+    }
+    args
 }
