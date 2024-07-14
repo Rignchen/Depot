@@ -43,4 +43,3 @@ structstruck::strike! {
         }
     }
 }
-

@@ -1,5 +1,5 @@
 use clap::Parser;
-use depot::{package_manager::get_package_manager, error::unwrap_depot_error};
+use depot::{error::unwrap_depot_error, package_manager::get_package_manager};
 mod cli;
 use cli::{Args, Command};
 

@@ -24,6 +24,3 @@ pub fn unwrap_depot_error<T>(result: DepotResult<T>) -> T {
         }
     }
 }
-
-
-
