@@ -24,12 +24,16 @@ structstruck::strike! {
             Install(
                 struct Install {
                     pub package: String,
+                    #[clap(short, long)]
+                    pub yes: bool,
                 }
             ),
             #[clap(alias = "r")]
             Remove(
                 struct Remove {
                     pub package: String,
+                    #[clap(short, long)]
+                    pub yes: bool,
                 }
             ),
             #[clap(alias = "s")]
