@@ -1,4 +1,4 @@
-use crate::{DepotError, DepotResult};
+use crate::error::{DepotError, DepotResult};
 use std::io::Read;
 
 /// List of all supported operating systems.

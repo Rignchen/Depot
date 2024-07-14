@@ -1,5 +1,5 @@
 use std::env;
-use crate::{DepotError, DepotResult, OperatingSystem};
+use crate::{os::OperatingSystem, error::{DepotError, DepotResult}};
 
 /// List of all supported operating systems.
 #[derive(clap::ValueEnum, Debug, Clone, PartialEq)]
