@@ -13,7 +13,6 @@ use depot::{
 fn main() {
     let args = parse_args();
     let package_manager = unwrap_depot_error(get_package_manager(args.package_manager));
-    println!("Package manager: {:?}", package_manager);
     match args.cmd {
         Command::Install(i) => unwrap_depot_error(package_manager.install(&i)),
         Command::Remove(r) => unwrap_depot_error(package_manager.remove(&r)),
