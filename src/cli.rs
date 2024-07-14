@@ -37,7 +37,7 @@ structstruck::strike! {
             #[clap(alias = "s")]
             Search(
                 struct Search {
-                    pub query: String,
+                    pub package: String,
                 }
             ),
             /// Update one or all packages

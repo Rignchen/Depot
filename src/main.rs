@@ -18,13 +18,10 @@ fn main() {
     println!(
         "{}",
         match args.cmd {
-            Command::Install(i) => format!("Install package: {}", i.package),
-            Command::Remove(r) => format!("Remove package: {}", r.package),
-            Command::Search(s) => format!("Search for package: {}", s.query),
-            Command::Update(u) => format!(
-                "Update package list: {}",
-                u.package.unwrap_or("all".to_string())
-            ),
+            Command::Install(i) => package_manager.install(&i),
+            Command::Remove(r) => package_manager.remove(&r),
+            Command::Search(s) => package_manager.search(&s),
+            Command::Update(u) => package_manager.update(&u),
         }
     );
 }
