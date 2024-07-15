@@ -31,72 +31,74 @@ impl From<&OperatingSystem> for PackageManager {
     }
 }
 
+/// Run a command with the package manager.
+/// This macro is used to avoid code duplication between all the package manager and their methods.
+macro_rules! run_command {
+    ($name:expr, $arg1:expr, $packages:expr, $arg2: expr, $instruction:expr) => {{
+        let mut command = Command::new($name);
+        command.arg($arg1);
+        if $instruction.yes {
+            command.arg($arg2);
+        }
+        command.args($packages);
+        command
+    }};
+    ($name:expr, $arg1:expr, $packages:expr) => {{
+        let mut command = Command::new($name);
+        command.arg($arg1);
+        command.arg($packages);
+        command
+    }};
+    ($name:expr, $all:expr, $arg1:expr, $packages:expr) => {{
+        let mut command = Command::new($name);
+        match $packages {
+            Some(package) => command.arg($arg1).args(package),
+            None => command.arg($all),
+        };
+        command
+    }};
+}
+
 impl PackageManager {
     /// Install a package using the package manager.
     pub fn install(&self, instruction: &Install) -> DepotResult<()> {
         let result = match self {
-            PackageManager::Pacman => {
-                let mut command = Command::new("pacman");
-                command.arg("-S");
-                if instruction.yes {
-                    command.arg("--noconfirm");
-                }
-                command.args(&instruction.package);
-                command
-            }
-            PackageManager::Yay => {
-                let mut command = Command::new("yay");
-                command.arg("-S");
-                if instruction.yes {
-                    command.arg("--noconfirm");
-                }
-                command.args(&instruction.package);
-                command
-            }
-            PackageManager::Apk => {
-                let mut command = Command::new("apk");
-                command.arg("add");
-                if instruction.yes {
-                    command.arg("--no-cache");
-                }
-                command.args(&instruction.package);
-                command
-            }
-            PackageManager::AptGet => {
-                let mut command = Command::new("apt-get");
-                command.arg("install");
-                if instruction.yes {
-                    command.arg("-y");
-                }
-                command.args(&instruction.package);
-                command
-            }
+            PackageManager::Pacman => run_command!(
+                "pacman",
+                "-S",
+                &instruction.package,
+                "--noconfirm",
+                instruction
+            ),
+            PackageManager::Yay => run_command!(
+                "yay",
+                "-S",
+                &instruction.package,
+                "--noconfirm",
+                instruction
+            ),
+            PackageManager::Apk => run_command!(
+                "apk",
+                "add",
+                &instruction.package,
+                "--no-cache",
+                instruction
+            ),
+            PackageManager::AptGet => run_command!(
+                "apt-get",
+                "install",
+                &instruction.package,
+                "-y",
+                instruction
+            ),
             PackageManager::Apt => {
-                let mut command = Command::new("apt");
-                command.arg("install");
-                if instruction.yes {
-                    command.arg("-y");
-                }
-                command.args(&instruction.package);
-                command
+                run_command!("apt", "install", &instruction.package, "-y", instruction)
             }
             PackageManager::Pkg => {
-                let mut command = Command::new("pkg");
-                command.arg("install");
-                if instruction.yes {
-                    command.arg("-y");
-                }
-                command.args(&instruction.package);
-                command
+                run_command!("pkg", "install", &instruction.package, "-y", instruction)
             }
             PackageManager::Dnf => {
-                let mut command = Command::new("dnf");
-                command.arg("install");
-                if instruction.yes {
-                    command.arg("-y");
-                }
-                command.args(&instruction.package);
-                command
+                run_command!("dnf", "install", &instruction.package, "-y", instruction)
             }
         }
         .status();
@@ -112,68 +114,38 @@ impl PackageManager {
     /// Remove a package using the package manager.
     pub fn remove(&self, instruction: &Remove) -> DepotResult<()> {
         let result = match self {
-            PackageManager::Pacman => {
-                let mut command = Command::new("pacman");
-                command.arg("-R");
-                if instruction.yes {
-                    command.arg("--noconfirm");
-                }
-                command.args(&instruction.package);
-                command
-            }
-            PackageManager::Yay => {
-                let mut command = Command::new("yay");
-                command.arg("-R");
-                if instruction.yes {
-                    command.arg("--noconfirm");
-                }
-                command.args(&instruction.package);
-                command
-            }
-            PackageManager::Apk => {
-                let mut command = Command::new("apk");
-                command.arg("del");
-                if instruction.yes {
-                    command.arg("--no-cache");
-                }
-                command.args(&instruction.package);
-                command
-            }
+            PackageManager::Pacman => run_command!(
+                "pacman",
+                "-R",
+                &instruction.package,
+                "--noconfirm",
+                instruction
+            ),
+            PackageManager::Yay => run_command!(
+                "yay",
+                "-R",
+                &instruction.package,
+                "--noconfirm",
+                instruction
+            ),
+            PackageManager::Apk => run_command!(
+                "apk",
+                "del",
+                &instruction.package,
+                "--no-cache",
+                instruction
+            ),
             PackageManager::AptGet => {
-                let mut command = Command::new("apt-get");
-                command.arg("remove");
-                if instruction.yes {
-                    command.arg("-y");
-                }
-                command.args(&instruction.package);
-                command
+                run_command!("apt-get", "remove", &instruction.package, "-y", instruction)
             }
             PackageManager::Apt => {
-                let mut command = Command::new("apt");
-                command.arg("remove");
-                if instruction.yes {
-                    command.arg("-y");
-                }
-                command.args(&instruction.package);
-                command
+                run_command!("apt", "remove", &instruction.package, "-y", instruction)
             }
             PackageManager::Pkg => {
-                let mut command = Command::new("pkg");
-                command.arg("remove");
-                if instruction.yes {
-                    command.arg("-y");
-                }
-                command.args(&instruction.package);
-                command
+                run_command!("pkg", "remove", &instruction.package, "-y", instruction)
             }
             PackageManager::Dnf => {
-                let mut command = Command::new("dnf");
-                command.arg("remove");
-                if instruction.yes {
-                    command.arg("-y");
-                }
-                command.args(&instruction.package);
-                command
+                run_command!("dnf", "remove", &instruction.package, "-y", instruction)
             }
         }
         .status();
@@ -190,47 +162,16 @@ impl PackageManager {
     pub fn search(&self, instruction: &Search) -> DepotResult<()> {
         let result = match self {
             PackageManager::Pacman => {
-                let mut command = Command::new("pacman");
-                command.arg("-Ss");
-                command.arg(&instruction.package);
-                command
+                run_command!("pacman", "-Ss", &instruction.package)
             }
-            PackageManager::Yay => {
-                let mut command = Command::new("yay");
-                command.arg("-Ss");
-                command.arg(&instruction.package);
-                command
-            }
-            PackageManager::Apk => {
-                let mut command = Command::new("apk");
-                command.arg("search");
-                command.arg(&instruction.package);
-                command
-            }
+            PackageManager::Yay => run_command!("yay", "-Ss", &instruction.package),
+            PackageManager::Apk => run_command!("apk", "search", &instruction.package),
             PackageManager::AptGet => {
-                let mut command = Command::new("apt-cache");
-                command.arg("search");
-                command.arg(&instruction.package);
-                command
+                run_command!("apt-cache", "search", &instruction.package)
             }
-            PackageManager::Apt => {
-                let mut command = Command::new("apt");
-                command.arg("search");
-                command.arg(&instruction.package);
-                command
-            }
-            PackageManager::Pkg => {
-                let mut command = Command::new("pkg");
-                command.arg("search");
-                command.arg(&instruction.package);
-                command
-            }
-            PackageManager::Dnf => {
-                let mut command = Command::new("dnf");
-                command.arg("search");
-                command.arg(&instruction.package);
-                command
-            }
+            PackageManager::Apt => run_command!("apt", "search", &instruction.package),
+            PackageManager::Pkg => run_command!("pkg", "search", &instruction.package),
+            PackageManager::Dnf => run_command!("dnf", "search", &instruction.package),
         }
         .status();
         if result.is_ok() && result.unwrap().success() {
@@ -245,62 +186,15 @@ impl PackageManager {
     /// Update one or all package using the package manager.
     pub fn update(&self, instruction: &Update) -> DepotResult<()> {
         let result = match self {
-            PackageManager::Pacman => {
-                let mut command = Command::new("pacman");
-                match &instruction.package {
-                    Some(package) => command.arg("-S").args(package),
-                    None => command.arg("-Syu"),
-                };
-                command
-            }
-            PackageManager::Yay => {
-                let mut command = Command::new("yay");
-                match &instruction.package {
-                    Some(package) => command.arg("-S").args(package),
-                    None => command.arg("-Syu"),
-                };
-                command
-            }
-            PackageManager::Apk => {
-                let mut command = Command::new("apk");
-                match &instruction.package {
-                    Some(package) => command.arg("upgrade").args(package),
-                    None => command.arg("upgrade"),
-                };
-                command
-            }
+            PackageManager::Pacman => run_command!("pacman", "-Syu", "-S", &instruction.package),
+            PackageManager::Yay => run_command!("yay", "-Syu", "-S", &instruction.package),
+            PackageManager::Apk => run_command!("apk", "upgrade", "upgrade", &instruction.package),
             PackageManager::AptGet => {
-                let mut command = Command::new("apt-get");
-                match &instruction.package {
-                    Some(package) => command.arg("upgrade").args(package),
-                    None => command.arg("upgrade"),
-                };
-                command
+                run_command!("apt-get", "upgrade", "upgrade", &instruction.package)
             }
-            PackageManager::Apt => {
-                let mut command = Command::new("apt");
-                match &instruction.package {
-                    Some(package) => command.arg("upgrade").args(package),
-                    None => command.arg("upgrade"),
-                };
-                command
-            }
-            PackageManager::Pkg => {
-                let mut command = Command::new("pkg");
-                match &instruction.package {
-                    Some(package) => command.arg("upgrade").args(package),
-                    None => command.arg("upgrade"),
-                };
-                command
-            }
-            PackageManager::Dnf => {
-                let mut command = Command::new("dnf");
-                match &instruction.package {
-                    Some(package) => command.arg("upgrade").args(package),
-                    None => command.arg("upgrade"),
-                };
-                command
-            }
+            PackageManager::Apt => run_command!("apt", "upgrade", "upgrade", &instruction.package),
+            PackageManager::Pkg => run_command!("pkg", "upgrade", "upgrade", &instruction.package),
+            PackageManager::Dnf => run_command!("dnf", "upgrade", "upgrade", &instruction.package),
         }
         .status();
         if result.is_ok() && result.unwrap().success() {

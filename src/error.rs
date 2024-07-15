@@ -34,7 +34,8 @@ pub fn unwrap_depot_error<T>(result: DepotResult<T>) -> T {
                         PackageManagerError::SearchFailed(package) =>
                             format!("Failed to search for package: {}", package),
                         PackageManagerError::UpdateFailed(package) => match package {
-                            Some(package) => format!("Failed to update package: {}", package.join(", ")),
+                            Some(package) =>
+                                format!("Failed to update package: {}", package.join(", ")),
                             None => "Failed to update all packages.".to_string(),
                         },
                     },
