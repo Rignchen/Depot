@@ -4,6 +4,7 @@ use crate::{
     os::OperatingSystem,
 };
 use std::env;
+use std::process::Command;
 
 /// List of all supported operating systems.
 #[derive(clap::ValueEnum, Debug, Clone, PartialEq)]
@@ -34,14 +35,72 @@ impl PackageManager {
     /// Install a package using the package manager.
     pub fn install(&self, instruction: &Install) -> DepotResult<()> {
         match self {
-            PackageManager::Pacman => println!("pacman -S {}", instruction.package.join(" ")),
-            PackageManager::Yay => println!("yay -S {}", instruction.package.join(" ")),
-            PackageManager::Apk => println!("apk add {}", instruction.package.join(" ")),
-            PackageManager::AptGet => println!("apt-get install {}", instruction.package.join(" ")),
-            PackageManager::Apt => println!("apt install {}", instruction.package.join(" ")),
-            PackageManager::Pkg => println!("pkg install {}", instruction.package.join(" ")),
-            PackageManager::Dnf => println!("dnf install {}", instruction.package.join(" ")),
-        };
+            PackageManager::Pacman => {
+                let mut command = Command::new("pacman");
+                command.arg("-S");
+                if instruction.yes {
+                    command.arg("--noconfirm");
+                }
+                command.args(&instruction.package);
+                command
+            }
+            PackageManager::Yay => {
+                let mut command = Command::new("yay");
+                command.arg("-S");
+                if instruction.yes {
+                    command.arg("--noconfirm");
+                }
+                command.args(&instruction.package);
+                command
+            }
+            PackageManager::Apk => {
+                let mut command = Command::new("apk");
+                command.arg("add");
+                if instruction.yes {
+                    command.arg("--no-cache");
+                }
+                command.args(&instruction.package);
+                command
+            }
+            PackageManager::AptGet => {
+                let mut command = Command::new("apt-get");
+                command.arg("install");
+                if instruction.yes {
+                    command.arg("-y");
+                }
+                command.args(&instruction.package);
+                command
+            }
+            PackageManager::Apt => {
+                let mut command = Command::new("apt");
+                command.arg("install");
+                if instruction.yes {
+                    command.arg("-y");
+                }
+                command.args(&instruction.package);
+                command
+            }
+            PackageManager::Pkg => {
+                let mut command = Command::new("pkg");
+                command.arg("install");
+                if instruction.yes {
+                    command.arg("-y");
+                }
+                command.args(&instruction.package);
+                command
+            }
+            PackageManager::Dnf => {
+                let mut command = Command::new("dnf");
+                command.arg("install");
+                if instruction.yes {
+                    command.arg("-y");
+                }
+                command.args(&instruction.package);
+                command
+            }
+        }
+        .status()
+        .unwrap();
         Ok(())
     }
 
