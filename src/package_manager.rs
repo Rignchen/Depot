@@ -179,14 +179,51 @@ impl PackageManager {
     /// Search for a package using the package manager.
     pub fn search(&self, instruction: &Search) -> DepotResult<()> {
         match self {
-            PackageManager::Pacman => println!("pacman -Ss {}", instruction.package),
-            PackageManager::Yay => println!("yay -Ss {}", instruction.package),
-            PackageManager::Apk => println!("apk search {}", instruction.package),
-            PackageManager::AptGet => println!("apt-cache search {}", instruction.package),
-            PackageManager::Apt => println!("apt search {}", instruction.package),
-            PackageManager::Pkg => println!("pkg search {}", instruction.package),
-            PackageManager::Dnf => println!("dnf search {}", instruction.package),
-        };
+            PackageManager::Pacman => {
+                let mut command = Command::new("pacman");
+                command.arg("-Ss");
+                command.arg(&instruction.package);
+                command
+            }
+            PackageManager::Yay => {
+                let mut command = Command::new("yay");
+                command.arg("-Ss");
+                command.arg(&instruction.package);
+                command
+            }
+            PackageManager::Apk => {
+                let mut command = Command::new("apk");
+                command.arg("search");
+                command.arg(&instruction.package);
+                command
+            }
+            PackageManager::AptGet => {
+                let mut command = Command::new("apt-cache");
+                command.arg("search");
+                command.arg(&instruction.package);
+                command
+            }
+            PackageManager::Apt => {
+                let mut command = Command::new("apt");
+                command.arg("search");
+                command.arg(&instruction.package);
+                command
+            }
+            PackageManager::Pkg => {
+                let mut command = Command::new("pkg");
+                command.arg("search");
+                command.arg(&instruction.package);
+                command
+            }
+            PackageManager::Dnf => {
+                let mut command = Command::new("dnf");
+                command.arg("search");
+                command.arg(&instruction.package);
+                command
+            }
+        }
+        .status()
+        .unwrap();
         Ok(())
     }
 
