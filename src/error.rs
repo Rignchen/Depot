@@ -3,6 +3,7 @@
 pub enum DepotError {
     UnknownOperatingSystem,
     UnknownPackageManager,
+    PackageManagerError,
 }
 
 /// Result type which wither take a type T or a DepotError.
@@ -18,6 +19,8 @@ pub fn unwrap_depot_error<T>(result: DepotResult<T>) -> T {
                         "Unable to determine your current operating system.",
                     DepotError::UnknownPackageManager =>
                         "The package manager is unknown or not supported.",
+                    DepotError::PackageManagerError =>
+                        "An error occurred while running the package manager.",
                 }
             );
             std::process::exit(1);

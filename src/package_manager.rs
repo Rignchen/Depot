@@ -34,7 +34,7 @@ impl From<&OperatingSystem> for PackageManager {
 impl PackageManager {
     /// Install a package using the package manager.
     pub fn install(&self, instruction: &Install) -> DepotResult<()> {
-        match self {
+        let result = match self {
             PackageManager::Pacman => {
                 let mut command = Command::new("pacman");
                 command.arg("-S");
@@ -99,14 +99,17 @@ impl PackageManager {
                 command
             }
         }
-        .status()
-        .unwrap();
-        Ok(())
+        .status();
+        if result.is_ok() && result.unwrap().success() {
+            Ok(())
+        } else {
+            Err(DepotError::PackageManagerError)
+        }
     }
 
     /// Remove a package using the package manager.
     pub fn remove(&self, instruction: &Remove) -> DepotResult<()> {
-        match self {
+        let result = match self {
             PackageManager::Pacman => {
                 let mut command = Command::new("pacman");
                 command.arg("-R");
@@ -171,14 +174,17 @@ impl PackageManager {
                 command
             }
         }
-        .status()
-        .unwrap();
-        Ok(())
+        .status();
+        if result.is_ok() && result.unwrap().success() {
+            Ok(())
+        } else {
+            Err(DepotError::PackageManagerError)
+        }
     }
 
     /// Search for a package using the package manager.
     pub fn search(&self, instruction: &Search) -> DepotResult<()> {
-        match self {
+        let result = match self {
             PackageManager::Pacman => {
                 let mut command = Command::new("pacman");
                 command.arg("-Ss");
@@ -222,44 +228,80 @@ impl PackageManager {
                 command
             }
         }
-        .status()
-        .unwrap();
-        Ok(())
+        .status();
+        if result.is_ok() && result.unwrap().success() {
+            Ok(())
+        } else {
+            Err(DepotError::PackageManagerError)
+        }
     }
 
     /// Update one or all package using the package manager.
     pub fn update(&self, instruction: &Update) -> DepotResult<()> {
-        match self {
-            PackageManager::Pacman => match &instruction.package {
-                Some(package) => println!("pacman -S {}", package.join(" ")),
-                None => println!("pacman -Syu"),
-            },
-            PackageManager::Yay => match &instruction.package {
-                Some(package) => println!("yay -S {}", package.join(" ")),
-                None => println!("yay -Syu"),
-            },
-            PackageManager::Apk => match &instruction.package {
-                Some(package) => println!("apk add {}", package.join(" ")),
-                None => println!("apk update && apk upgrade"),
-            },
-            PackageManager::AptGet => match &instruction.package {
-                Some(package) => println!("apt-get install {}", package.join(" ")),
-                None => println!("apt-get update && apt-get upgrade"),
-            },
-            PackageManager::Apt => match &instruction.package {
-                Some(package) => println!("apt install {}", package.join(" ")),
-                None => println!("apt update && apt upgrade"),
-            },
-            PackageManager::Pkg => match &instruction.package {
-                Some(package) => println!("pkg install {}", package.join(" ")),
-                None => println!("pkg upgrade"),
-            },
-            PackageManager::Dnf => match &instruction.package {
-                Some(package) => println!("dnf install {}", package.join(" ")),
-                None => println!("dnf upgrade"),
-            },
-        };
-        Ok(())
+        let result = match self {
+            PackageManager::Pacman => {
+                let mut command = Command::new("pacman");
+                match &instruction.package {
+                    Some(package) => command.arg("-S").args(package),
+                    None => command.arg("-Syu"),
+                };
+                command
+            }
+            PackageManager::Yay => {
+                let mut command = Command::new("yay");
+                match &instruction.package {
+                    Some(package) => command.arg("-S").args(package),
+                    None => command.arg("-Syu"),
+                };
+                command
+            }
+            PackageManager::Apk => {
+                let mut command = Command::new("apk");
+                match &instruction.package {
+                    Some(package) => command.arg("upgrade").args(package),
+                    None => command.arg("upgrade"),
+                };
+                command
+            }
+            PackageManager::AptGet => {
+                let mut command = Command::new("apt-get");
+                match &instruction.package {
+                    Some(package) => command.arg("upgrade").args(package),
+                    None => command.arg("upgrade"),
+                };
+                command
+            }
+            PackageManager::Apt => {
+                let mut command = Command::new("apt");
+                match &instruction.package {
+                    Some(package) => command.arg("upgrade").args(package),
+                    None => command.arg("upgrade"),
+                };
+                command
+            }
+            PackageManager::Pkg => {
+                let mut command = Command::new("pkg");
+                match &instruction.package {
+                    Some(package) => command.arg("upgrade").args(package),
+                    None => command.arg("upgrade"),
+                };
+                command
+            }
+            PackageManager::Dnf => {
+                let mut command = Command::new("dnf");
+                match &instruction.package {
+                    Some(package) => command.arg("upgrade").args(package),
+                    None => command.arg("upgrade"),
+                };
+                command
+            }
+        }
+        .status();
+        if result.is_ok() && result.unwrap().success() {
+            Ok(())
+        } else {
+            Err(DepotError::PackageManagerError)
+        }
     }
 }
 
