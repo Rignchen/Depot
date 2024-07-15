@@ -107,14 +107,72 @@ impl PackageManager {
     /// Remove a package using the package manager.
     pub fn remove(&self, instruction: &Remove) -> DepotResult<()> {
         match self {
-            PackageManager::Pacman => println!("pacman -R {}", instruction.package.join(" ")),
-            PackageManager::Yay => println!("yay -R {}", instruction.package.join(" ")),
-            PackageManager::Apk => println!("apk del {}", instruction.package.join(" ")),
-            PackageManager::AptGet => println!("apt-get remove {}", instruction.package.join(" ")),
-            PackageManager::Apt => println!("apt remove {}", instruction.package.join(" ")),
-            PackageManager::Pkg => println!("pkg delete {}", instruction.package.join(" ")),
-            PackageManager::Dnf => println!("dnf remove {}", instruction.package.join(" ")),
-        };
+            PackageManager::Pacman => {
+                let mut command = Command::new("pacman");
+                command.arg("-R");
+                if instruction.yes {
+                    command.arg("--noconfirm");
+                }
+                command.args(&instruction.package);
+                command
+            }
+            PackageManager::Yay => {
+                let mut command = Command::new("yay");
+                command.arg("-R");
+                if instruction.yes {
+                    command.arg("--noconfirm");
+                }
+                command.args(&instruction.package);
+                command
+            }
+            PackageManager::Apk => {
+                let mut command = Command::new("apk");
+                command.arg("del");
+                if instruction.yes {
+                    command.arg("--no-cache");
+                }
+                command.args(&instruction.package);
+                command
+            }
+            PackageManager::AptGet => {
+                let mut command = Command::new("apt-get");
+                command.arg("remove");
+                if instruction.yes {
+                    command.arg("-y");
+                }
+                command.args(&instruction.package);
+                command
+            }
+            PackageManager::Apt => {
+                let mut command = Command::new("apt");
+                command.arg("remove");
+                if instruction.yes {
+                    command.arg("-y");
+                }
+                command.args(&instruction.package);
+                command
+            }
+            PackageManager::Pkg => {
+                let mut command = Command::new("pkg");
+                command.arg("remove");
+                if instruction.yes {
+                    command.arg("-y");
+                }
+                command.args(&instruction.package);
+                command
+            }
+            PackageManager::Dnf => {
+                let mut command = Command::new("dnf");
+                command.arg("remove");
+                if instruction.yes {
+                    command.arg("-y");
+                }
+                command.args(&instruction.package);
+                command
+            }
+        }
+        .status()
+        .unwrap();
         Ok(())
     }
 
