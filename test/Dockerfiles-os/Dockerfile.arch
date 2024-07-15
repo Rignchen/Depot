@@ -2,5 +2,6 @@ FROM archlinux/archlinux
 
 WORKDIR /app
 COPY ./target/release/depot ./
+RUN pacman -Sy --noconfirm
 ENTRYPOINT ["./depot"]
 
