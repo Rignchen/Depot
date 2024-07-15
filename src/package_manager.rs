@@ -1,6 +1,6 @@
 use crate::{
     cli::{Install, Remove, Search, Update},
-    error::{DepotError, DepotResult},
+    error::{DepotError, DepotResult, PackageManagerError as error},
     os::OperatingSystem,
 };
 use std::env;
@@ -103,7 +103,9 @@ impl PackageManager {
         if result.is_ok() && result.unwrap().success() {
             Ok(())
         } else {
-            Err(DepotError::PackageManagerError)
+            Err(DepotError::PackageManagerError(error::InstallFailed(
+                instruction.package.clone(),
+            )))
         }
     }
 
@@ -178,7 +180,9 @@ impl PackageManager {
         if result.is_ok() && result.unwrap().success() {
             Ok(())
         } else {
-            Err(DepotError::PackageManagerError)
+            Err(DepotError::PackageManagerError(error::RemoveFailed(
+                instruction.package.clone(),
+            )))
         }
     }
 
@@ -232,7 +236,9 @@ impl PackageManager {
         if result.is_ok() && result.unwrap().success() {
             Ok(())
         } else {
-            Err(DepotError::PackageManagerError)
+            Err(DepotError::PackageManagerError(error::SearchFailed(
+                instruction.package.clone(),
+            )))
         }
     }
 
@@ -300,7 +306,9 @@ impl PackageManager {
         if result.is_ok() && result.unwrap().success() {
             Ok(())
         } else {
-            Err(DepotError::PackageManagerError)
+            Err(DepotError::PackageManagerError(error::UpdateFailed(
+                instruction.package.clone(),
+            )))
         }
     }
 }
