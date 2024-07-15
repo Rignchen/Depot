@@ -1,4 +1,5 @@
 use crate::{
+    cli::{Install, Remove, Search, Update},
     error::{DepotError, DepotResult},
     os::OperatingSystem,
 };
@@ -26,6 +27,85 @@ impl From<&OperatingSystem> for PackageManager {
             OperatingSystem::Ubuntu => PackageManager::AptGet,
             OperatingSystem::Fedora => PackageManager::Dnf,
         }
+    }
+}
+
+impl PackageManager {
+    /// Install a package using the package manager.
+    pub fn install(&self, instruction: &Install) -> DepotResult<()> {
+        match self {
+            PackageManager::Pacman => println!("pacman -S {}", instruction.package.join(" ")),
+            PackageManager::Yay => println!("yay -S {}", instruction.package.join(" ")),
+            PackageManager::Apk => println!("apk add {}", instruction.package.join(" ")),
+            PackageManager::AptGet => println!("apt-get install {}", instruction.package.join(" ")),
+            PackageManager::Apt => println!("apt install {}", instruction.package.join(" ")),
+            PackageManager::Pkg => println!("pkg install {}", instruction.package.join(" ")),
+            PackageManager::Dnf => println!("dnf install {}", instruction.package.join(" ")),
+        };
+        Ok(())
+    }
+
+    /// Remove a package using the package manager.
+    pub fn remove(&self, instruction: &Remove) -> DepotResult<()> {
+        match self {
+            PackageManager::Pacman => println!("pacman -R {}", instruction.package.join(" ")),
+            PackageManager::Yay => println!("yay -R {}", instruction.package.join(" ")),
+            PackageManager::Apk => println!("apk del {}", instruction.package.join(" ")),
+            PackageManager::AptGet => println!("apt-get remove {}", instruction.package.join(" ")),
+            PackageManager::Apt => println!("apt remove {}", instruction.package.join(" ")),
+            PackageManager::Pkg => println!("pkg delete {}", instruction.package.join(" ")),
+            PackageManager::Dnf => println!("dnf remove {}", instruction.package.join(" ")),
+        };
+        Ok(())
+    }
+
+    /// Search for a package using the package manager.
+    pub fn search(&self, instruction: &Search) -> DepotResult<()> {
+        match self {
+            PackageManager::Pacman => println!("pacman -Ss {}", instruction.package),
+            PackageManager::Yay => println!("yay -Ss {}", instruction.package),
+            PackageManager::Apk => println!("apk search {}", instruction.package),
+            PackageManager::AptGet => println!("apt-cache search {}", instruction.package),
+            PackageManager::Apt => println!("apt search {}", instruction.package),
+            PackageManager::Pkg => println!("pkg search {}", instruction.package),
+            PackageManager::Dnf => println!("dnf search {}", instruction.package),
+        };
+        Ok(())
+    }
+
+    /// Update one or all package using the package manager.
+    pub fn update(&self, instruction: &Update) -> DepotResult<()> {
+        match self {
+            PackageManager::Pacman => match &instruction.package {
+                Some(package) => println!("pacman -S {}", package.join(" ")),
+                None => println!("pacman -Syu"),
+            },
+            PackageManager::Yay => match &instruction.package {
+                Some(package) => println!("yay -S {}", package.join(" ")),
+                None => println!("yay -Syu"),
+            },
+            PackageManager::Apk => match &instruction.package {
+                Some(package) => println!("apk add {}", package.join(" ")),
+                None => println!("apk update && apk upgrade"),
+            },
+            PackageManager::AptGet => match &instruction.package {
+                Some(package) => println!("apt-get install {}", package.join(" ")),
+                None => println!("apt-get update && apt-get upgrade"),
+            },
+            PackageManager::Apt => match &instruction.package {
+                Some(package) => println!("apt install {}", package.join(" ")),
+                None => println!("apt update && apt upgrade"),
+            },
+            PackageManager::Pkg => match &instruction.package {
+                Some(package) => println!("pkg install {}", package.join(" ")),
+                None => println!("pkg upgrade"),
+            },
+            PackageManager::Dnf => match &instruction.package {
+                Some(package) => println!("dnf install {}", package.join(" ")),
+                None => println!("dnf upgrade"),
+            },
+        };
+        Ok(())
     }
 }
 
