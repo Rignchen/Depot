@@ -13,7 +13,7 @@ Our inspiration for this is [Stow](https://www.gnu.org/software/stow/) a symlink
 package list in the same place as your dotfiles.
 
 ## Changelog
-**v0.1.0 :** [Read changelog](./CHANGELOG.md) <!-- x-release-please-version -->
+**v0.1.1 :** [Read changelog](./CHANGELOG.md) <!-- x-release-please-version -->
 
 ## Installation
 
