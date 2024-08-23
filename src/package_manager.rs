@@ -105,12 +105,10 @@ impl PackageManager {
         if result.is_ok() && result.unwrap().success() {
             Ok(())
         } else {
-            Err(
-                DepotError::PackageManagerError(error::InstallFailed(
-                        instruction.package.clone(),
-                ),
-                self.clone()
-                ))
+            Err(DepotError::PackageManagerError(
+                error::InstallFailed(instruction.package.clone()),
+                self.clone(),
+            ))
         }
     }
 
@@ -155,11 +153,9 @@ impl PackageManager {
         if result.is_ok() && result.unwrap().success() {
             Ok(())
         } else {
-            Err(
-                DepotError::PackageManagerError(error::RemoveFailed(
-                        instruction.package.clone(),
-                ),
-                self.clone()
+            Err(DepotError::PackageManagerError(
+                error::RemoveFailed(instruction.package.clone()),
+                self.clone(),
             ))
         }
     }
@@ -183,11 +179,9 @@ impl PackageManager {
         if result.is_ok() && result.unwrap().success() {
             Ok(())
         } else {
-            Err(
-                DepotError::PackageManagerError(error::SearchFailed(
-                        instruction.package.clone(),
-                ),
-                self.clone()
+            Err(DepotError::PackageManagerError(
+                error::SearchFailed(instruction.package.clone()),
+                self.clone(),
             ))
         }
     }
@@ -209,11 +203,9 @@ impl PackageManager {
         if result.is_ok() && result.unwrap().success() {
             Ok(())
         } else {
-            Err(
-                DepotError::PackageManagerError(error::UpdateFailed(
-                        instruction.package.clone(),
-                ),
-                self.clone()
+            Err(DepotError::PackageManagerError(
+                error::UpdateFailed(instruction.package.clone()),
+                self.clone(),
             ))
         }
     }

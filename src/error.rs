@@ -32,15 +32,24 @@ pub fn unwrap_depot_error<T>(result: DepotResult<T>) -> T {
                     DepotError::UnknownPackageManager =>
                         "The package manager is unknown or not supported.".to_string(),
                     DepotError::PackageManagerError(pme, pm) => match pme {
-                        PackageManagerError::InstallFailed(package) =>
-                            format!("Failed to install package: {} using {:?}", package.join(", "), pm),
-                        PackageManagerError::RemoveFailed(package) =>
-                            format!("Failed to remove package: {} using {:?}", package.join(", "), pm),
+                        PackageManagerError::InstallFailed(package) => format!(
+                            "Failed to install package: {} using {:?}",
+                            package.join(", "),
+                            pm
+                        ),
+                        PackageManagerError::RemoveFailed(package) => format!(
+                            "Failed to remove package: {} using {:?}",
+                            package.join(", "),
+                            pm
+                        ),
                         PackageManagerError::SearchFailed(package) =>
-                            format!("Failed to search for package: {} using {:?}", package.join(", "), pm),
+                            format!("Failed to search for package: {} using {:?}", package, pm),
                         PackageManagerError::UpdateFailed(package) => match package {
-                            Some(package) =>
-                                format!("Failed to update package: {} using {:?}", package.join(", "), pm),
+                            Some(package) => format!(
+                                "Failed to update package: {} using {:?}",
+                                package.join(", "),
+                                pm
+                            ),
                             None => "Failed to update all packages.".to_string(),
                         },
                     },
