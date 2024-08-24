@@ -1,9 +1,10 @@
 use crate::{
     cli::{Install, Remove, Search, Update},
-    error::{DepotError, DepotResult},
+    error::{DepotError, DepotResult, PackageManagerError as error},
     os::OperatingSystem,
 };
 use std::env;
+use std::process::Command;
 
 /// List of all supported operating systems.
 #[derive(clap::ValueEnum, Debug, Clone, PartialEq)]
@@ -30,82 +31,183 @@ impl From<&OperatingSystem> for PackageManager {
     }
 }
 
+/// Run a command with the package manager.
+/// This macro is used to avoid code duplication between all the package manager and their methods.
+macro_rules! run_command {
+    ($name:expr, $arg1:expr, $packages:expr, $arg2: expr, $instruction:expr) => {{
+        let mut command = Command::new($name);
+        command.arg($arg1);
+        if $instruction.yes {
+            command.arg($arg2);
+        }
+        command.args($packages);
+        command
+    }};
+    ($name:expr, $arg1:expr, $packages:expr) => {{
+        let mut command = Command::new($name);
+        command.arg($arg1);
+        command.arg($packages);
+        command
+    }};
+    ($name:expr, $all:expr, $arg1:expr, $packages:expr) => {{
+        let mut command = Command::new($name);
+        match $packages {
+            Some(package) => command.arg($arg1).args(package),
+            None => command.arg($all),
+        };
+        command
+    }};
+}
+
 impl PackageManager {
     /// Install a package using the package manager.
     pub fn install(&self, instruction: &Install) -> DepotResult<()> {
-        match self {
-            PackageManager::Pacman => println!("pacman -S {}", instruction.package.join(" ")),
-            PackageManager::Yay => println!("yay -S {}", instruction.package.join(" ")),
-            PackageManager::Apk => println!("apk add {}", instruction.package.join(" ")),
-            PackageManager::AptGet => println!("apt-get install {}", instruction.package.join(" ")),
-            PackageManager::Apt => println!("apt install {}", instruction.package.join(" ")),
-            PackageManager::Pkg => println!("pkg install {}", instruction.package.join(" ")),
-            PackageManager::Dnf => println!("dnf install {}", instruction.package.join(" ")),
-        };
-        Ok(())
+        let result = match self {
+            PackageManager::Pacman => run_command!(
+                "pacman",
+                "-S",
+                &instruction.package,
+                "--noconfirm",
+                instruction
+            ),
+            PackageManager::Yay => run_command!(
+                "yay",
+                "-S",
+                &instruction.package,
+                "--noconfirm",
+                instruction
+            ),
+            PackageManager::Apk => run_command!(
+                "apk",
+                "add",
+                &instruction.package,
+                "--no-cache",
+                instruction
+            ),
+            PackageManager::AptGet => run_command!(
+                "apt-get",
+                "install",
+                &instruction.package,
+                "-y",
+                instruction
+            ),
+            PackageManager::Apt => {
+                run_command!("apt", "install", &instruction.package, "-y", instruction)
+            }
+            PackageManager::Pkg => {
+                run_command!("pkg", "install", &instruction.package, "-y", instruction)
+            }
+            PackageManager::Dnf => {
+                run_command!("dnf", "install", &instruction.package, "-y", instruction)
+            }
+        }
+        .status();
+        if result.is_ok() && result.unwrap().success() {
+            Ok(())
+        } else {
+            Err(DepotError::PackageManagerError(
+                error::InstallFailed(instruction.package.clone()),
+                self.clone(),
+            ))
+        }
     }
 
     /// Remove a package using the package manager.
     pub fn remove(&self, instruction: &Remove) -> DepotResult<()> {
-        match self {
-            PackageManager::Pacman => println!("pacman -R {}", instruction.package.join(" ")),
-            PackageManager::Yay => println!("yay -R {}", instruction.package.join(" ")),
-            PackageManager::Apk => println!("apk del {}", instruction.package.join(" ")),
-            PackageManager::AptGet => println!("apt-get remove {}", instruction.package.join(" ")),
-            PackageManager::Apt => println!("apt remove {}", instruction.package.join(" ")),
-            PackageManager::Pkg => println!("pkg delete {}", instruction.package.join(" ")),
-            PackageManager::Dnf => println!("dnf remove {}", instruction.package.join(" ")),
-        };
-        Ok(())
+        let result = match self {
+            PackageManager::Pacman => run_command!(
+                "pacman",
+                "-R",
+                &instruction.package,
+                "--noconfirm",
+                instruction
+            ),
+            PackageManager::Yay => run_command!(
+                "yay",
+                "-R",
+                &instruction.package,
+                "--noconfirm",
+                instruction
+            ),
+            PackageManager::Apk => run_command!(
+                "apk",
+                "del",
+                &instruction.package,
+                "--no-cache",
+                instruction
+            ),
+            PackageManager::AptGet => {
+                run_command!("apt-get", "remove", &instruction.package, "-y", instruction)
+            }
+            PackageManager::Apt => {
+                run_command!("apt", "remove", &instruction.package, "-y", instruction)
+            }
+            PackageManager::Pkg => {
+                run_command!("pkg", "remove", &instruction.package, "-y", instruction)
+            }
+            PackageManager::Dnf => {
+                run_command!("dnf", "remove", &instruction.package, "-y", instruction)
+            }
+        }
+        .status();
+        if result.is_ok() && result.unwrap().success() {
+            Ok(())
+        } else {
+            Err(DepotError::PackageManagerError(
+                error::RemoveFailed(instruction.package.clone()),
+                self.clone(),
+            ))
+        }
     }
 
     /// Search for a package using the package manager.
     pub fn search(&self, instruction: &Search) -> DepotResult<()> {
-        match self {
-            PackageManager::Pacman => println!("pacman -Ss {}", instruction.package),
-            PackageManager::Yay => println!("yay -Ss {}", instruction.package),
-            PackageManager::Apk => println!("apk search {}", instruction.package),
-            PackageManager::AptGet => println!("apt-cache search {}", instruction.package),
-            PackageManager::Apt => println!("apt search {}", instruction.package),
-            PackageManager::Pkg => println!("pkg search {}", instruction.package),
-            PackageManager::Dnf => println!("dnf search {}", instruction.package),
-        };
-        Ok(())
+        let result = match self {
+            PackageManager::Pacman => {
+                run_command!("pacman", "-Ss", &instruction.package)
+            }
+            PackageManager::Yay => run_command!("yay", "-Ss", &instruction.package),
+            PackageManager::Apk => run_command!("apk", "search", &instruction.package),
+            PackageManager::AptGet => {
+                run_command!("apt-cache", "search", &instruction.package)
+            }
+            PackageManager::Apt => run_command!("apt", "search", &instruction.package),
+            PackageManager::Pkg => run_command!("pkg", "search", &instruction.package),
+            PackageManager::Dnf => run_command!("dnf", "search", &instruction.package),
+        }
+        .status();
+        if result.is_ok() && result.unwrap().success() {
+            Ok(())
+        } else {
+            Err(DepotError::PackageManagerError(
+                error::SearchFailed(instruction.package.clone()),
+                self.clone(),
+            ))
+        }
     }
 
     /// Update one or all package using the package manager.
     pub fn update(&self, instruction: &Update) -> DepotResult<()> {
-        match self {
-            PackageManager::Pacman => match &instruction.package {
-                Some(package) => println!("pacman -S {}", package.join(" ")),
-                None => println!("pacman -Syu"),
-            },
-            PackageManager::Yay => match &instruction.package {
-                Some(package) => println!("yay -S {}", package.join(" ")),
-                None => println!("yay -Syu"),
-            },
-            PackageManager::Apk => match &instruction.package {
-                Some(package) => println!("apk add {}", package.join(" ")),
-                None => println!("apk update && apk upgrade"),
-            },
-            PackageManager::AptGet => match &instruction.package {
-                Some(package) => println!("apt-get install {}", package.join(" ")),
-                None => println!("apt-get update && apt-get upgrade"),
-            },
-            PackageManager::Apt => match &instruction.package {
-                Some(package) => println!("apt install {}", package.join(" ")),
-                None => println!("apt update && apt upgrade"),
-            },
-            PackageManager::Pkg => match &instruction.package {
-                Some(package) => println!("pkg install {}", package.join(" ")),
-                None => println!("pkg upgrade"),
-            },
-            PackageManager::Dnf => match &instruction.package {
-                Some(package) => println!("dnf install {}", package.join(" ")),
-                None => println!("dnf upgrade"),
-            },
-        };
-        Ok(())
+        let result = match self {
+            PackageManager::Pacman => run_command!("pacman", "-Syu", "-S", &instruction.package),
+            PackageManager::Yay => run_command!("yay", "-Syu", "-S", &instruction.package),
+            PackageManager::Apk => run_command!("apk", "upgrade", "upgrade", &instruction.package),
+            PackageManager::AptGet => {
+                run_command!("apt-get", "upgrade", "upgrade", &instruction.package)
+            }
+            PackageManager::Apt => run_command!("apt", "upgrade", "upgrade", &instruction.package),
+            PackageManager::Pkg => run_command!("pkg", "upgrade", "upgrade", &instruction.package),
+            PackageManager::Dnf => run_command!("dnf", "upgrade", "upgrade", &instruction.package),
+        }
+        .status();
+        if result.is_ok() && result.unwrap().success() {
+            Ok(())
+        } else {
+            Err(DepotError::PackageManagerError(
+                error::UpdateFailed(instruction.package.clone()),
+                self.clone(),
+            ))
+        }
     }
 }
 
