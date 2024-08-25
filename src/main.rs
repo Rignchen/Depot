@@ -1,5 +1,6 @@
+use clap::Parser;
 use depot::{
-    cli::{parse_args, Command},
+    cli::{Args, Command},
     error::unwrap_depot_error,
     package_manager::get_package_manager,
 };
@@ -11,7 +12,7 @@ use depot::{
 ///  - the environment variables
 ///  - get the os name and deduce it from there
 fn main() {
-    let args = parse_args();
+    let args = Args::parse();
     let package_manager = unwrap_depot_error(get_package_manager(args.package_manager));
     match args.cmd {
         Command::Install(i) => unwrap_depot_error(package_manager.install(&i)),
