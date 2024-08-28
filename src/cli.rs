@@ -1,5 +1,5 @@
 use crate::package_manager::PackageManager;
-use clap::Parser;
+use clap::{ArgAction, Parser};
 
 structstruck::strike! {
     /// Every one has once encountered the problem of learning a new package manager when changing their operating systems.
@@ -18,6 +18,7 @@ structstruck::strike! {
             #[clap(alias = "i")]
             Install(
                 struct Install {
+                    #[clap(required = true, action = ArgAction::Set)]
                     pub package: Vec<String>,
                     /// Install the package without asking for confirmation
                     #[clap(short, long)]
@@ -28,6 +29,7 @@ structstruck::strike! {
             #[clap(alias = "r")]
             Remove(
                 struct Remove {
+                    #[clap(required = true, action = ArgAction::Set)]
                     pub package: Vec<String>,
                     /// Install the package without asking for confirmation
                     #[clap(short, long)]
@@ -53,25 +55,4 @@ structstruck::strike! {
             ),
         }
     }
-}
-
-pub fn parse_args() -> Args {
-    let mut args = Args::parse();
-    // due to a bug in clap, we need to ensure that at lesat one argument package is provided
-    match &mut args.cmd {
-        Command::Install(install) => {
-            if install.package.is_empty() {
-                eprintln!("Error: No package provided");
-                std::process::exit(1);
-            }
-        }
-        Command::Remove(remove) => {
-            if remove.package.is_empty() {
-                eprintln!("Error: No package provided");
-                std::process::exit(1);
-            }
-        }
-        _ => {}
-    }
-    args
 }
