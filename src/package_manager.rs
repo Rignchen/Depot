@@ -209,6 +209,28 @@ impl PackageManager {
             ))
         }
     }
+
+    /// Test if the package manager is installed.
+    /// If it is not installed, return an error.
+    /// ```
+    /// use depot::package_manager::PackageManager;
+    /// assert!(PackageManager::Pacman.ensure_pm_installed().is_ok());
+    /// ```
+    /// ```should_panic
+    /// use depot::package_manager::PackageManager;
+    /// PackageManager::Dnf.ensure_pm_installed().unwrap();
+    /// ```
+    pub fn ensure_pm_installed(&self) -> DepotResult<Self> {
+        let temp = Command::new("which").arg(format!("{:?}", self).to_lowercase()).output();
+        if temp.is_ok() && temp.unwrap().status.success() {
+            Ok(self.clone())
+        } else {
+            Err(DepotError::PackageManagerError(
+                error::PackageManagerNotInstalled,
+                self.clone(),
+            ))
+        }
+    }
 }
 
 /// Get the package manager to use.

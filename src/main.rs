@@ -19,7 +19,7 @@ fn main() {
 ///  - get the os name and deduce it from there
 fn run() -> DepotResult<()> {
     let args = Args::parse();
-    let package_manager = get_package_manager(args.package_manager)?;
+    let package_manager = get_package_manager(args.package_manager)?.ensure_pm_installed()?;
     match args.cmd {
         Command::Install(i) => package_manager.install(&i)?,
         Command::Remove(r) => package_manager.remove(&r)?,

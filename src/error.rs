@@ -12,6 +12,7 @@ structstruck::strike! {
                 RemoveFailed(Vec<String>),
                 SearchFailed(String),
                 UpdateFailed(Option<Vec<String>>),
+                PackageManagerNotInstalled,
             },
             PackageManager
         ),
@@ -30,7 +31,7 @@ pub fn unwrap_depot_error<T>(result: DepotResult<T>) -> T {
                     DepotError::UnknownOperatingSystem =>
                         "Unable to determine your current operating system.".to_string(),
                     DepotError::UnknownPackageManager =>
-                        "The package manager is unknown or not supported.".to_string(),
+                        "The package manager is unknown or not supported by your version of depot.".to_string(),
                     DepotError::PackageManagerError(pme, pm) => match pme {
                         PackageManagerError::InstallFailed(package) => format!(
                             "Failed to install package: {} using {:?}",
@@ -52,6 +53,8 @@ pub fn unwrap_depot_error<T>(result: DepotResult<T>) -> T {
                             ),
                             None => "Failed to update all packages.".to_string(),
                         },
+                        PackageManagerError::PackageManagerNotInstalled =>
+                            format!("{:?} is not installed on your system.", pm),
                     },
                 }
             );
