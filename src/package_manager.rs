@@ -221,7 +221,9 @@ impl PackageManager {
     /// PackageManager::Dnf.ensure_pm_installed().unwrap();
     /// ```
     pub fn ensure_pm_installed(&self) -> DepotResult<Self> {
-        let temp = Command::new("which").arg(format!("{:?}", self).to_lowercase()).output();
+        let temp = Command::new("which")
+            .arg(format!("{:?}", self).to_lowercase())
+            .output();
         if temp.is_ok() && temp.unwrap().status.success() {
             Ok(self.clone())
         } else {
