@@ -214,7 +214,7 @@ impl PackageManager {
     /// If it is not installed, return an error.
     /// ```
     /// use depot::package_manager::PackageManager;
-    /// assert!(PackageManager::Pacman.ensure_pm_installed().is_ok());
+    /// assert!(PackageManager::Apt.ensure_pm_installed().is_ok());
     /// ```
     /// ```should_panic
     /// use depot::package_manager::PackageManager;
