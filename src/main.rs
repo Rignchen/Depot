@@ -1,9 +1,15 @@
 use clap::Parser;
 use depot::{
     cli::{Args, Command},
-    error::unwrap_depot_error,
+    error::{unwrap_depot_error, DepotResult},
     package_manager::get_package_manager,
 };
+
+/// Entry point of the program
+/// Handle the error returned by the program
+fn main() {
+    unwrap_depot_error(run());
+}
 
 /// Main function of the program
 /// Parse the command line arguments
@@ -11,13 +17,14 @@ use depot::{
 ///  - the command line arguments
 ///  - the environment variables
 ///  - get the os name and deduce it from there
-fn main() {
+fn run() -> DepotResult<()> {
     let args = Args::parse();
-    let package_manager = unwrap_depot_error(get_package_manager(args.package_manager));
+    let package_manager = get_package_manager(args.package_manager)?.ensure_pm_installed()?;
     match args.cmd {
-        Command::Install(i) => unwrap_depot_error(package_manager.install(&i)),
-        Command::Remove(r) => unwrap_depot_error(package_manager.remove(&r)),
-        Command::Search(s) => unwrap_depot_error(package_manager.search(&s)),
-        Command::Update(u) => unwrap_depot_error(package_manager.update(&u)),
+        Command::Install(i) => package_manager.install(&i)?,
+        Command::Remove(r) => package_manager.remove(&r)?,
+        Command::Search(s) => package_manager.search(&s)?,
+        Command::Update(u) => package_manager.update(&u)?,
     };
+    Ok(())
 }
