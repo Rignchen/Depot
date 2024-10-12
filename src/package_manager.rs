@@ -215,6 +215,7 @@ impl PackageManager {
     /// ```
     /// use depot::package_manager::PackageManager;
     /// assert!(PackageManager::Apt.ensure_pm_installed().is_ok());
+    /// assert!(PackageManager::AptGet.ensure_pm_installed().is_ok());
     /// ```
     /// ```should_panic
     /// use depot::package_manager::PackageManager;
@@ -222,8 +223,10 @@ impl PackageManager {
     /// ```
     pub fn ensure_pm_installed(&self) -> DepotResult<Self> {
         let temp = Command::new("which")
-            .arg(format!("{:?}", self).to_lowercase())
-            .output();
+            .arg(match self {
+                PackageManager::AptGet => "apt-get".to_string(),
+                _ => format!("{:?}", self).to_lowercase()
+            }).output();
         if temp.is_ok() && temp.unwrap().status.success() {
             Ok(self.clone())
         } else {
