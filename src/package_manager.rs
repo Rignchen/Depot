@@ -225,8 +225,9 @@ impl PackageManager {
         let temp = Command::new("which")
             .arg(match self {
                 PackageManager::AptGet => "apt-get".to_string(),
-                _ => format!("{:?}", self).to_lowercase()
-            }).output();
+                _ => format!("{:?}", self).to_lowercase(),
+            })
+            .output();
         if temp.is_ok() && temp.unwrap().status.success() {
             Ok(self.clone())
         } else {
